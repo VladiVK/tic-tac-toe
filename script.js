@@ -1,5 +1,3 @@
-
-
 let restartButton = document.querySelector('#restart');
 restartButton.addEventListener('click', restartGame);
 let currentGamerDisplay = document.querySelector('#current-gamer');
@@ -27,26 +25,26 @@ function nextStep() {
     getGamer(this, currentGamer);
 
     currentGamer = getNextGamer(currentGamer);
-    
+
     showCurrentGamer(currentGamer, currentGamerDisplay);
-    
+
     deactivateCell(this);
-    
-    
+
+
     let winner = checkWin(cells); // важно запускать после каждого хода
-    if( winner != false) {
+    if (winner != false) {
         endGame(cells, winner, currentGamerDisplay);
     } else {
         let isFilled = checkFieldIsFilled(cells);
-        if(isFilled) {
+        if (isFilled) {
             endGame(cells, winner, currentGamerDisplay);
         }
-        
+
     }
 }
 
 // конец игры
-function  endGame(cells, winner, currentGamerDisplay) {
+function endGame(cells, winner, currentGamerDisplay) {
     stopGame(cells);
     showWinner(winner);
     showCurrentGamer('-', currentGamerDisplay);
@@ -82,9 +80,6 @@ function deactivateCell(elem) {
     elem.removeEventListener('click', nextStep);
 }
 
-
-
-
 // отвязываем событие от ячеек
 function stopGame(cells) {
     for (let i = 0; i < cells.length; i++) {
@@ -95,7 +90,6 @@ function stopGame(cells) {
 function setDefaultGamer() {
     return 'X';
 }
-
 // вернет false = ничья  Х или О при победе
 function checkWin(cells) {
     let winningCombinations = [
@@ -125,9 +119,9 @@ function checkWin(cells) {
 }
 // проверка на ничью
 function checkFieldIsFilled(cells) {
-    
+
     for (let i = 0; i < cells.length; i++) {
-        if(cells[i].innerHTML == '') {
+        if (cells[i].innerHTML == '') {
             return false;
         }
     }
@@ -135,14 +129,15 @@ function checkFieldIsFilled(cells) {
 }
 
 function showWinner(winner) {
-    if(winner !== false) {
+    if (winner !== false) {
         alert(winner);
     } else {
         alert('draw');
     }
-    
+
 }
+
 function showCurrentGamer(name, elem) {
-    
+
     elem.innerHTML = name;
 }
