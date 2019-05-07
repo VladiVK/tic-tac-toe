@@ -1,32 +1,63 @@
-let cells = getFieldCells('#field td');
-let currentGamer = 'X';
 
-prepareField(cells);
+
+let restartButton = document.querySelector('#restart');
+restartButton.addEventListener('click', restartGame);
+let currentGamerDisplay = document.querySelector('#current-gamer');
+let cells = getFieldCells('#field td');
+let currentGamer = setDefaultGamer();
+
+prepareField();
 
 // получаем ячейки
 function getFieldCells(selector) {
     return document.querySelectorAll(selector);
 }
 // готовим поле, привязываем событие ячейкам
-function prepareField(cells) {
-    for (let i = 0; i < cells.length; i++) {
-        cells[i].addEventListener('click', nextStep);
-    }
+// allow globals vars
+function prepareField() {
+    activateCell(cells);
+    currentGamer = setDefaultGamer();
+
+    showCurrentGamer(currentGamer, currentGamerDisplay);
 }
 
 // происходит событие: игрок делает ход
+// allow globals vars
 function nextStep() {
     getGamer(this, currentGamer);
 
     currentGamer = getNextGamer(currentGamer);
-   
+    
+    showCurrentGamer(currentGamer, currentGamerDisplay);
+    
     deactivateCell(this);
+    
     
     let winner = checkWin(cells); // важно запускать после каждого хода
     if( winner != false) {
-        endGame(cells);
+        endGame(cells, winner, currentGamerDisplay);
+    } else {
+        let isFilled = checkFieldIsFilled(cells);
+        if(isFilled) {
+            endGame(cells, winner, currentGamerDisplay);
+        }
+        
     }
 }
+
+// конец игры
+function  endGame(cells, winner, currentGamerDisplay) {
+    stopGame(cells);
+    showWinner(winner);
+    showCurrentGamer('-', currentGamerDisplay);
+}
+// перезагрузить игру
+function restartGame() {
+    prepareField(cells);
+}
+
+/* Вспомогательные функции */
+
 // получить игрока
 function getGamer(cell, content) {
     return cell.innerHTML = content;
@@ -39,21 +70,30 @@ function getNextGamer(currentGamer) {
         return 'X';
     }
 }
-
+// активируем ячейки
+function activateCell(cell) {
+    for (let i = 0; i < cells.length; i++) {
+        cells[i].innerHTML = '';
+        cells[i].addEventListener('click', nextStep);
+    }
+}
 // диактивируем ячейку
 function deactivateCell(elem) {
     elem.removeEventListener('click', nextStep);
 }
 
-// конец игры
-function  endGame() {
-    stopGame(cells)
-}
+
+
+
 // отвязываем событие от ячеек
 function stopGame(cells) {
     for (let i = 0; i < cells.length; i++) {
         cells[i].removeEventListener('click', nextStep);
     }
+}
+// устанавливаем первого игрока 'X'
+function setDefaultGamer() {
+    return 'X';
 }
 
 // вернет false = ничья  Х или О при победе
@@ -82,4 +122,27 @@ function checkWin(cells) {
         }
     }
     return false;
+}
+// проверка на ничью
+function checkFieldIsFilled(cells) {
+    
+    for (let i = 0; i < cells.length; i++) {
+        if(cells[i].innerHTML == '') {
+            return false;
+        }
+    }
+    return true;
+}
+
+function showWinner(winner) {
+    if(winner !== false) {
+        alert(winner);
+    } else {
+        alert('draw');
+    }
+    
+}
+function showCurrentGamer(name, elem) {
+    
+    elem.innerHTML = name;
 }
